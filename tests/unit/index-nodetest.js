@@ -6,8 +6,15 @@ const sinon = require('sinon');
 const path = require('path');
 const Plugin = require('../../index');
 
-const { dir: PROJECT_ROOT } = path.parse(require.resolve('../../package.json'));
-const SENTRY_BIN_PATH = path.join(PROJECT_ROOT, 'node_modules/@sentry/cli/bin/sentry-cli');
+// Dynamically resolve `sentry-cli` location (same way as main plugin)
+const sentryCliPackagePath = require.resolve("@sentry/cli/package.json");
+const { dir: sentryCliDirectory } = path.parse(sentryCliPackagePath);
+const sentryCliRelativeBinLocation =
+  require(sentryCliPackagePath).bin["sentry-cli"];
+const SENTRY_BIN_PATH = path.join(
+  sentryCliDirectory,
+  sentryCliRelativeBinLocation
+);
 
 function setupSinon() {
   before(function () {
