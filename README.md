@@ -67,7 +67,7 @@ Make sure your app's `moudlePrefix` is equal to your Sentry `appName`, and your 
 
 1. Install Sentry:
 
-`npm i @sentry/browser @sentry/integrations`
+`pnpm add @sentry/ember`
 
 2. Add sentry config to `config/environment.js` file
 

@@ -8,6 +8,10 @@
 /bower_components/
 /node_modules/
 
+# pnpm
+.pnpm-debug.log*
+.pnpm-store/
+
 # misc
 /.env*
 /.pnp*
