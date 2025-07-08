@@ -58,13 +58,13 @@ module.exports = {
         this.log("SENTRY: Assigning commits...");
         this.sentryCliExec(
           "releases",
-          `set-commits "${releaseName}" --auto --ignore-missing --ignore-empty`
+          `set-commits "${releaseName}" --auto --ignore-missing`
         );
 
         this.log("SENTRY: Uploading source maps...");
         this.sentryCliExec(
-          "releases",
-          `files "${releaseName}" upload-sourcemaps --rewrite ${assetsDir} ${urlPrefix}`
+          "sourcemaps",
+          `upload --release "${releaseName}" --rewrite ${assetsDir} ${urlPrefix}`
         );
 
         this.log("SENTRY: Finalizing release...");
@@ -80,8 +80,8 @@ module.exports = {
 
         this.log("SENTRY: Deploying release...");
         this.sentryCliExec(
-          "releases",
-          `deploys "${releaseName}" new -e ${environment}`
+          "deploys",
+          `new --release "${releaseName}" -e ${environment}`
         );
         this.log("SENTRY: Deployed!");
       },
@@ -104,13 +104,13 @@ module.exports = {
         return this._exec(
           [
             sentryCliAbsoluteBinLocation,
-            url ? `--url ${url}` : "",
+            url ? `--url ${url}` : null,
             `--auth-token ${authToken}`,
             command,
             `--org ${orgName}`,
             `--project ${appName}`,
             subCommand,
-          ].join(" ")
+          ].filter(Boolean).join(" ")
         );
       },
 
