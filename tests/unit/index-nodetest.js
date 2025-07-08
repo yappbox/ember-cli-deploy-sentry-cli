@@ -87,6 +87,12 @@ describe('sentry-cli', function () {
 
       assert.equal(typeof plugin.didFail, 'function', 'Implements didFail');
     });
+
+    it('didBuild', function () {
+      const plugin = Plugin.createDeployPlugin({ name: 'sentry-cli' });
+
+      assert.equal(typeof plugin.didBuild, 'function', 'Implements didBuild');
+    });
   });
 
   describe('configure', function () {
@@ -158,6 +164,47 @@ describe('sentry-cli', function () {
 
         assert.equal(plugin.readConfig('url'), '');
       });
+
+      it('injectDebugIds', function () {
+        const plugin = Plugin.createDeployPlugin({ name: 'sentry-cli' });
+
+        plugin.beforeHook(this.context);
+        plugin.configure(this.context);
+
+        assert.equal(plugin.readConfig('injectDebugIds'), true);
+      });
+    });
+  });
+
+  describe('didBuild', function () {
+    it('injects debug IDs', function () {
+      const plugin = Plugin.createDeployPlugin({ name: 'sentry-cli' });
+      const stub = this.sinon.stub(plugin, '_exec');
+
+      plugin.beforeHook(this.context);
+      plugin.configure(this.context);
+      plugin.didBuild();
+
+      this.sinon.assert.calledWithExactly(
+        stub,
+        `${SENTRY_BIN_PATH} --auth-token my-auth-token sourcemaps --org my-org --project my-project inject "${path.join(
+          'my-dest-dir',
+          'assets'
+        )}"`
+      );
+    });
+
+    it('skips debug ID injection when disabled', function () {
+      const plugin = Plugin.createDeployPlugin({ name: 'sentry-cli' });
+      const stub = this.sinon.stub(plugin, '_exec');
+
+      this.context.config['sentry-cli'].injectDebugIds = false;
+
+      plugin.beforeHook(this.context);
+      plugin.configure(this.context);
+      plugin.didBuild();
+
+      this.sinon.assert.notCalled(stub);
     });
   });
 
