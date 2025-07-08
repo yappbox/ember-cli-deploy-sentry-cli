@@ -88,8 +88,7 @@ Make sure your app's `moudlePrefix` is equal to your Sentry `appName`, and your 
 ```js
 // app/sentry.js
 
-import * as Sentry from '@sentry/browser';
-import { Ember } from '@sentry/integrations/esm/ember';
+import * as Sentry from '@sentry/ember';
 import config from 'web-app/config/environment';
 
 const sentryConfig = config.sentry || {};
@@ -98,8 +97,7 @@ export function startSentry() {
   Sentry.init({
     environment: config.environment,
     release: `${config.modulePrefix}@${config.APP.version}`,
-    ...sentryConfig,
-    integrations: [new Ember()]
+    ...sentryConfig
   });
 }
 ```
