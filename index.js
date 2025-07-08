@@ -39,9 +39,24 @@ module.exports = {
         },
 
         url: "",
+
+        injectDebugIds: true,
       },
 
       requiredConfig: ["appName", "orgName", "authToken"],
+
+      didBuild() {
+        if (!this.readConfig("injectDebugIds")) {
+          this.log("SENTRY: Debug ID injection disabled, skipping...");
+          return;
+        }
+
+        const assetsDir = this.readConfig("assetsDir");
+
+        this.log("SENTRY: Injecting Debug IDs...");
+        this.sentryCliExec("sourcemaps", `inject "${assetsDir}"`);
+        this.log("SENTRY: Debug IDs injected!");
+      },
 
       didPrepare() {
         const releaseName = `${this.readConfig("appName")}@${this.readConfig(
