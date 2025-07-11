@@ -1,11 +1,11 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable max-len, max-lines-per-function */
 // eslint-disable-next-line strict
-'use strict';
+"use strict";
 
-const path = require('path');
-const { execSync } = require('child_process');
-const BasePlugin = require('ember-cli-deploy-plugin');
+const path = require("path");
+const { execSync } = require("child_process");
+const BasePlugin = require("ember-cli-deploy-plugin");
 const packageJson = require("./package.json");
 
 // Dynamically resolve `sentry-cli` location
@@ -63,9 +63,6 @@ module.exports = {
           "revisionKey"
         )}`;
         const assetsDir = this.readConfig("assetsDir");
-        const urlPrefix = this.readConfig("urlPrefix")
-          ? `--url-prefix ${this.readConfig("urlPrefix")}`
-          : "";
 
         this.log("SENTRY: Creating release...");
         this.sentryCliExec("releases", `new "${releaseName}"`);
@@ -79,7 +76,7 @@ module.exports = {
         this.log("SENTRY: Uploading source maps...");
         this.sentryCliExec(
           "sourcemaps",
-          `upload --release "${releaseName}" --rewrite ${assetsDir} ${urlPrefix}`
+          `upload --release "${releaseName}" ${assetsDir}`
         );
 
         this.log("SENTRY: Finalizing release...");
@@ -125,7 +122,9 @@ module.exports = {
             `--org ${orgName}`,
             `--project ${appName}`,
             subCommand,
-          ].filter(Boolean).join(" ")
+          ]
+            .filter(Boolean)
+            .join(" ")
         );
       },
 
